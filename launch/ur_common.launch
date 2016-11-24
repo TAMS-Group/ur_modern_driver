@@ -15,6 +15,7 @@
   <arg name="servoj_time" default="0.008" />
   <arg name="base_frame" default="$(arg prefix)base" />
   <arg name="tool_frame" default="$(arg prefix)tool0_controller" />
+  <arg name="use_ros_control" default="False" />
     
   <!-- The max_velocity parameter is only used for debugging in the ur_driver. It's not related to actual velocity limits -->
   <arg name="max_velocity" default="10.0"/> <!-- [rad/s] -->
@@ -32,5 +33,7 @@
     <param name="servoj_time" type="double" value="$(arg servoj_time)" />
 	<param name="base_frame" type="str" value="$(arg base_frame)"/>
     <param name="tool_frame" type="str" value="$(arg tool_frame)"/>
+    <param name="use_ros_control" type="bool" value="$(arg use_ros_control)"/>
+    <param name="servoj_gain" type="double" value="750"/>
   </node>
 </launch>
