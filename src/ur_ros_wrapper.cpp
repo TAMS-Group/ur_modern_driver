@@ -350,7 +350,7 @@ private:
 
 		reorder_traj_joints(goal.trajectory);
 		
-		if (!start_positions_match(goal.trajectory, 0.01)) {
+		if (!start_positions_match(goal.trajectory, 0.015)) {
 			result_.error_code = result_.INVALID_GOAL;
 			result_.error_string = "Goal start doesn't match current pose";
 			gh.setRejected(result_, result_.error_string);
@@ -514,6 +514,8 @@ private:
 			std::vector<double> qActual = robot_.rt_interface_->robot_state_->getQActual();
 			if( fabs(traj.points[0].positions[i] - qActual[i]) > eps )
 			{
+				print_error("Joint " + std::to_string(i) + " deviates from start state " +
+					std::to_string(traj.points[0].positions[i]) + " (is " + std::to_string(qActual[i]) + ")");
 				return false;
 			}
 		}
