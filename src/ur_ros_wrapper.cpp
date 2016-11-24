@@ -225,11 +225,17 @@ private:
 	void trajThread(std::vector<double> timestamps,
 			std::vector<std::vector<double> > positions,
 			std::vector<std::vector<double> > velocities) {
+		bool succeded = robot_.doTraj(timestamps, positions, velocities);
 
-		robot_.doTraj(timestamps, positions, velocities);
 		if (has_goal_) {
-			result_.error_code = result_.SUCCESSFUL;
-			goal_handle_.setSucceeded(result_);
+			if (succeded){
+				result_.error_code = result_.SUCCESSFUL;
+				goal_handle_.setSucceeded(result_);
+			} else {
+				result_.error_code = result_.GOAL_TOLERANCE_VIOLATED;
+				result_.error_string = "Cannot reach exact goal position";
+				goal_handle_.setAborted(result_,result_.error_string);
+			}
 			has_goal_ = false;
 		}
 	}

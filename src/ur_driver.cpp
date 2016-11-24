@@ -111,8 +111,27 @@ bool UrDriver::doTraj(std::vector<double> inp_timestamps,
 	}
 	executing_traj_ = false;
 	//Signal robot to stop driverProg()
+
+	std::chrono::high_resolution_clock::time_point t1;
+	t1 = std::chrono::high_resolution_clock::now();
+
+	std::vector<double> qActual;
+	std::vector<double>& goal_position = inp_positions[inp_positions.size()-1];
+	bool arrived = false;
+	while((std::chrono::high_resolution_clock::now() - t1) < std::chrono::seconds(3) && !arrived){
+		qActual = rt_interface_->robot_state_->getQActual();
+		arrived = true;
+		for (int i=0; i < qActual.size(); i++) {
+			if (std::abs(goal_position[i] - qActual[i]) > 0.012) {
+				arrived = false;
+				std::this_thread::sleep_for(
+					std::chrono::milliseconds((int) ((servoj_time_ * 1000) / 8.)));
+				break;
+			}
+		}
+	}
 	UrDriver::closeServo(positions);
-	return true;
+	return arrived;
 }
 
 void UrDriver::servoj(std::vector<double> positions, int keepalive) {
